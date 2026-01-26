@@ -1,0 +1,18 @@
+[Unit]
+Description=Seahawks Harvester - Network Monitoring Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=user
+WorkingDirectory=/home/user/seahawks-harvester
+Environment="PATH=/home/user/seahawks-harvester/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/home/user/seahawks-harvester/venv/bin/python /home/user/seahawks-harvester/run_with_nester.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

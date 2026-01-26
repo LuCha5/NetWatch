@@ -88,23 +88,68 @@ class SeahawksHarvester:
         self.logger.addHandler(file_handler)
         self.logger.addHandler(console_handler)
     
-    def measure_wan_latency(self, host: str = None) -> Optional[float]:
-        """Mesure la latence WAN vers un hôte de test"""
+    def measure_wan_latency(self, host: str = None, ping_count: int = 4) -> Optional[float]:
+        """
+        Mesure la latence WAN vers un hôte de test avec plusieurs pings ICMP
+        
+        Args:
+            host: Hôte de test (défaut: 8.8.8.8)
+            ping_count: Nombre de pings pour la moyenne (défaut: 4)
+        
+        Returns:
+            Latence moyenne en ms, ou None en cas d'erreur
+        """
         if host is None:
             host = self.config.get("wan_test_host", "8.8.8.8")
         
         try:
-            start_time = time.time()
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(5)
-            sock.connect((host, 80))
-            latency = (time.time() - start_time) * 1000  # en ms
-            sock.close()
+            # Utiliser ping ICMP via subprocess
+            import subprocess
+            import platform
             
-            self.logger.info(f"Latence WAN vers {host}: {latency:.2f}ms")
-            return round(latency, 2)
+            # Adapter la commande selon l'OS
+            param = '-n' if platform.system().lower() == 'windows' else '-c'
+            command = ['ping', param, str(ping_count), host]
+            
+            # Exécuter ping
+            result = subprocess.run(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                timeout=ping_count * 2 + 5,
+                text=True
+            )
+            
+            if result.returncode != 0:
+                self.logger.error(f"Ping échoué vers {host}")
+                return None
+            
+            # Parser les résultats pour extraire les latences
+            import re
+            latencies = []
+            
+            # Regex pour extraire les temps (format: time=XX.X ms)
+            for match in re.finditer(r'time[=<](\d+\.?\d*)\s*ms', result.stdout):
+                latencies.append(float(match.group(1)))
+            
+            if not latencies:
+                self.logger.error(f"Impossible d'extraire les latences pour {host}")
+                return None
+            
+            # Calculer les statistiques
+            avg_latency = sum(latencies) / len(latencies)
+            min_latency = min(latencies)
+            max_latency = max(latencies)
+            
+            self.logger.info(
+                f"Latence WAN vers {host}: {len(latencies)}/{ping_count} pings réussis | "
+                f"Moyenne: {avg_latency:.2f}ms | Min: {min_latency:.2f}ms | Max: {max_latency:.2f}ms"
+            )
+            
+            return round(avg_latency, 2)
+            
         except Exception as e:
-            self.logger.error(f"Erreur mesure latence WAN: {str(e)}")
+            self.logger.error(f"Erreur lors de la mesure de latence vers {host}: {e}")
             return None
     
     def scan_network(self) -> Dict:
@@ -133,7 +178,7 @@ class SeahawksHarvester:
         
         try:
             # Scan du réseau
-            self.nm.scan(hosts=network, arguments=f'-p {ports} -sV -O --max-retries 2 --host-timeout 30s')
+            self.nm.scan(hosts=network, arguments=f'-p {ports} -sV --max-retries 2 --host-timeout 30s')
             
             for host in self.nm.all_hosts():
                 host_info = {

@@ -107,6 +107,42 @@ class NesterUploader:
             return False
         
         return self.upload_report(str(latest_report))
+    
+    def sync_logs(self, max_lines: int = 500):
+        """Upload les logs récents vers le Nester"""
+        try:
+            log_file = Path("logs/harvester_service.log")
+            
+            if not log_file.exists():
+                self.logger.warning("Fichier de logs introuvable")
+                return False
+            
+            # Lire les dernières lignes
+            with open(log_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+                recent_logs = lines[-max_lines:] if len(lines) > max_lines else lines
+            
+            # Préparer les données
+            log_data = {
+                'timestamp': datetime.now().isoformat(),
+                'lines': ''.join(recent_logs),
+                'total_lines': len(lines),
+                'sent_lines': len(recent_logs)
+            }
+            
+            url = f"{self.nester_url}/api/probe/{self.franchise_id}/logs"
+            response = requests.post(url, json=log_data, timeout=30)
+            
+            if response.status_code in [200, 201]:
+                self.logger.info(f"Logs uploadés avec succès ({len(recent_logs)} lignes)")
+                return True
+            else:
+                self.logger.error(f"Erreur upload logs: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"Erreur lors de l'upload des logs: {str(e)}")
+            return False
 
 
 def main():

@@ -32,6 +32,9 @@ class NesterManager:
         self.reports_dir = self.data_dir / "reports"
         self.reports_dir.mkdir(exist_ok=True)
         
+        self.logs_dir = self.data_dir / "probe_logs"
+        self.logs_dir.mkdir(exist_ok=True)
+        
         self._setup_logging()
         self.logger.info(f"Seahawks Nester v{self.VERSION} démarré")
     
@@ -128,8 +131,10 @@ class NesterManager:
                         report = json.load(rf)
                         probe_data['last_report'] = {
                             'timestamp': report.get('timestamp'),
-                            'hosts_up': report['summary']['hosts_up'],
-                            'wan_latency_ms': report.get('wan_latency_ms')
+                            'summary': report.get('summary', {}),
+                            'wan_latency_ms': report.get('wan_latency_ms'),
+                            'scan_duration_seconds': report.get('scan_duration_seconds'),
+                            'hosts': report.get('hosts', [])
                         }
                 
                 probes.append(probe_data)
@@ -211,6 +216,44 @@ class NesterManager:
             stats['average_wan_latency'] = round(sum(latencies) / len(latencies), 2)
         
         return stats
+    
+    def save_probe_logs(self, franchise_id: str, log_data: dict):
+        """Sauvegarde les logs d'une sonde"""
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        log_file = self.logs_dir / f"{franchise_id}_{timestamp}.log"
+        
+        # Sauvegarder les logs
+        with open(log_file, 'w', encoding='utf-8') as f:
+            f.write(log_data.get('lines', ''))
+        
+        # Sauvegarder les métadonnées
+        metadata_file = self.logs_dir / f"{franchise_id}_latest.json"
+        with open(metadata_file, 'w', encoding='utf-8') as f:
+            json.dump({
+                'timestamp': log_data.get('timestamp'),
+                'total_lines': log_data.get('total_lines'),
+                'sent_lines': log_data.get('sent_lines'),
+                'log_file': str(log_file.name)
+            }, f, indent=2)
+        
+        self.logger.info(f"Logs sauvegardés pour {franchise_id} ({log_data.get('sent_lines')} lignes)")
+    
+    def get_probe_logs(self, franchise_id: str):
+        """Récupère les logs d'une sonde"""
+        metadata_file = self.logs_dir / f"{franchise_id}_latest.json"
+        
+        if not metadata_file.exists():
+            return None
+        
+        with open(metadata_file, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        
+        log_file = self.logs_dir / metadata['log_file']
+        if log_file.exists():
+            with open(log_file, 'r', encoding='utf-8') as f:
+                metadata['content'] = f.read()
+        
+        return metadata
 
 
 # Instance globale du gestionnaire
@@ -247,6 +290,13 @@ def api_probes():
     """API: Liste de toutes les sondes"""
     probes = nester.get_all_probes()
     return jsonify(probes)
+
+
+@app.route('/api/statistics')
+def api_statistics():
+    """API: Statistiques globales"""
+    stats = nester.get_statistics()
+    return jsonify(stats)
 
 
 @app.route('/api/probe/<franchise_id>')
@@ -306,13 +356,36 @@ def api_upload_report(franchise_id):
     return jsonify({"success": True, "message": "Report saved"}), 201
 
 
+@app.route('/api/probe/<franchise_id>/logs', methods=['POST'])
+def api_upload_logs(franchise_id):
+    """API: Upload des logs d'une sonde"""
+    log_data = request.get_json()
+    
+    if not log_data:
+        return jsonify({"error": "Invalid log data"}), 400
+    
+    nester.save_probe_logs(franchise_id, log_data)
+    return jsonify({"success": True, "message": "Logs saved"}), 201
+
+
+@app.route('/api/probe/<franchise_id>/logs')
+def api_get_logs(franchise_id):
+    """API: Récupération des logs d'une sonde"""
+    logs = nester.get_probe_logs(franchise_id)
+    
+    if logs:
+        return jsonify(logs)
+    
+    return jsonify({"error": "No logs available"}), 404
+
+
 if __name__ == '__main__':
     print("\n" + "="*60)
     print("  🏈 Seahawks Nester - Supervision Centralisée")
     print("  Version:", NesterManager.VERSION)
     print("="*60)
-    print("\n📊 Dashboard accessible sur: http://localhost:8000")
-    print("📡 API REST disponible sur: http://localhost:8000/api")
+    print("\n📊 Dashboard accessible sur: http://0.0.0.0:8080")
+    print("📡 API REST disponible sur: http://0.0.0.0:8080/api")
     print("\n🔒 Mode production: Définir SECRET_KEY dans l'environnement\n")
     
-    app.run(host='0.0.0.0', port=8000, debug=False)
+    app.run(host='0.0.0.0', port=8080, debug=True)
