@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seahawks Nester - Dashboard Central</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #002244 0%, #69be28 100%);
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #002244;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #69be28;
+            font-size: 1.2em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            color: #002244;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #69be28;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        
+        .probes-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .probes-section h2 {
+            color: #002244;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .probes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .probe-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .probe-card:hover {
+            border-color: #69be28;
+            box-shadow: 0 4px 8px rgba(105, 190, 40, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .probe-card.connected {
+            border-left: 5px solid #69be28;
+        }
+        
+        .probe-card.disconnected {
+            border-left: 5px solid #dc3545;
+            opacity: 0.7;
+        }
+        
+        .probe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .probe-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #002244;
+        }
+        
+        .probe-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-connected {
+            background: #69be28;
+            color: white;
+        }
+        
+        .status-disconnected {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .probe-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.75em;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+        
+        .info-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #002244;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #002244;
+            background: white;
+            color: #002244;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            background: #002244;
+            color: white;
+        }
+        
+        .filter-btn.active {
+            background: #69be28;
+            border-color: #69be28;
+            color: white;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #69be28;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+        }
+        
+        .refresh-info {
+            text-align: center;
+            color: white;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+        
+        .no-probes {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏈 Seahawks Nester</h1>
+            <p class="subtitle">Supervision Centralisée des Franchises NFL</p>
+        </div>
+        
+        <div class="refresh-info">
+            🔄 Actualisation automatique toutes les 30 secondes | Dernière mise à jour: <span id="lastUpdate">--:--:--</span>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>🏢 Franchises</h3>
+                <div class="stat-value" id="totalProbes">0</div>
+                <div class="stat-label">Total enregistrées</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>✅ Connectées</h3>
+                <div class="stat-value" id="connectedProbes" style="color: #69be28;">0</div>
+                <div class="stat-label">Actives</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>❌ Déconnectées</h3>
+                <div class="stat-value" id="disconnectedProbes" style="color: #dc3545;">0</div>
+                <div class="stat-label">Hors ligne</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>🖥️ Équipements</h3>
+                <div class="stat-value" id="totalEquipment">0</div>
+                <div class="stat-label">Total supervisés</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>🌐 Latence Moy.</h3>
+                <div class="stat-value" id="avgLatency">-- ms</div>
+                <div class="stat-label">WAN moyenne</div>
+            </div>
+        </div>
+        
+        <div class="probes-section">
+            <h2>
+                📡 Sondes Actives
+                <span style="font-size: 0.6em; color: #666; font-weight: normal;" id="probeCount">(0)</span>
+            </h2>
+            
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">Toutes</button>
+                <button class="filter-btn" data-filter="connected">Connectées</button>
+                <button class="filter-btn" data-filter="disconnected">Déconnectées</button>
+                
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Rechercher une franchise...">
+                </div>
+            </div>
+            
+            <div class="probes-grid" id="probesGrid">
+                <div class="no-probes">Chargement des sondes...</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 Seahawks Monitoring System | Datacenter Roubaix</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                🔒 Architecture sécurisée | 🌐 32 franchises NFL | 📊 Supervision temps réel
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        let allProbes = [];
+        let currentFilter = 'all';
+        
+        // Formatage de la date
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('fr-FR');
+        }
+        
+        // Temps écoulé
+        function timeAgo(seconds) {
+            if (seconds < 60) return `${seconds}s`;
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}min`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+            return `${Math.floor(seconds / 86400)}j`;
+        }
+        
+        // Charger les statistiques
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                const stats = data.statistics;
+                document.getElementById('totalProbes').textContent = stats.total_probes;
+                document.getElementById('connectedProbes').textContent = stats.connected_probes;
+                document.getElementById('disconnectedProbes').textContent = stats.disconnected_probes;
+                document.getElementById('totalEquipment').textContent = stats.total_equipment;
+                
+                if (stats.average_wan_latency > 0) {
+                    document.getElementById('avgLatency').textContent = `${stats.average_wan_latency} ms`;
+                } else {
+                    document.getElementById('avgLatency').textContent = '-- ms';
+                }
+                
+            } catch (error) {
+                console.error('Erreur chargement statistiques:', error);
+            }
+        }
+        
+        // Charger les sondes
+        async function loadProbes() {
+            try {
+                const response = await fetch('/api/probes');
+                allProbes = await response.json();
+                
+                renderProbes();
+                
+            } catch (error) {
+                console.error('Erreur chargement sondes:', error);
+            }
+        }
+        
+        // Afficher les sondes
+        function renderProbes() {
+            const grid = document.getElementById('probesGrid');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Filtrer les sondes
+            let filteredProbes = allProbes.filter(probe => {
+                const matchesFilter = currentFilter === 'all' || probe.status === currentFilter;
+                const matchesSearch = probe.franchise_name.toLowerCase().includes(searchTerm) ||
+                                     probe.franchise_id.toLowerCase().includes(searchTerm);
+                return matchesFilter && matchesSearch;
+            });
+            
+            document.getElementById('probeCount').textContent = `(${filteredProbes.length})`;
+            
+            if (filteredProbes.length === 0) {
+                grid.innerHTML = '<div class="no-probes">Aucune sonde trouvée</div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredProbes.map(probe => `
+                <div class="probe-card ${probe.status}" onclick="viewProbe('${probe.franchise_id}')">
+                    <div class="probe-header">
+                        <div class="probe-name">${probe.franchise_name}</div>
+                        <span class="probe-status status-${probe.status}">
+                            ${probe.status === 'connected' ? '✅ Connecté' : '❌ Déconnecté'}
+                        </span>
+                    </div>
+                    
+                    <div style="color: #666; font-size: 0.9em; margin-bottom: 10px;">
+                        ID: ${probe.franchise_id}
+                    </div>
+                    
+                    <div class="probe-info">
+                        <div class="info-item">
+                            <span class="info-label">Dernière comm.</span>
+                            <span class="info-value">${timeAgo(probe.last_seen_ago_seconds)}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Équipements</span>
+                            <span class="info-value">${probe.last_report ? probe.last_report.hosts_up : '-'}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Latence WAN</span>
+                            <span class="info-value">${probe.last_report && probe.last_report.wan_latency_ms ? probe.last_report.wan_latency_ms + ' ms' : '-'}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Dernier scan</span>
+                            <span class="info-value" style="font-size: 0.9em;">${probe.last_report ? formatDateTime(probe.last_report.timestamp) : '-'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Voir le détail d'une sonde
+        function viewProbe(franchiseId) {
+            window.location.href = `/probe/${franchiseId}`;
+        }
+        
+        // Filtres
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    renderProbes();
+                });
+            });
+            
+            document.getElementById('searchInput').addEventListener('input', renderProbes);
+        });
+        
+        // Actualisation
+        function refresh() {
+            loadStatistics();
+            loadProbes();
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR');
+        }
+        
+        // Chargement initial
+        refresh();
+        
+        // Actualisation automatique
+        setInterval(refresh, 30000);
+    </script>
+</body>
+</html>

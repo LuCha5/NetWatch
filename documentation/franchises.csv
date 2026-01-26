@@ -1,0 +1,35 @@
+# Configuration des 32 franchises NFL
+# Format: franchise_id,franchise_name,ip_address,network_range
+
+franchise_01,Seattle Seahawks,192.168.1.100,192.168.1.0/24
+franchise_02,San Francisco 49ers,192.168.2.100,192.168.2.0/24
+franchise_03,Los Angeles Rams,192.168.3.100,192.168.3.0/24
+franchise_04,Arizona Cardinals,192.168.4.100,192.168.4.0/24
+franchise_05,Dallas Cowboys,192.168.5.100,192.168.5.0/24
+franchise_06,New York Giants,192.168.6.100,192.168.6.0/24
+franchise_07,Philadelphia Eagles,192.168.7.100,192.168.7.0/24
+franchise_08,Washington Commanders,192.168.8.100,192.168.8.0/24
+franchise_09,Green Bay Packers,192.168.9.100,192.168.9.0/24
+franchise_10,Minnesota Vikings,192.168.10.100,192.168.10.0/24
+franchise_11,Chicago Bears,192.168.11.100,192.168.11.0/24
+franchise_12,Detroit Lions,192.168.12.100,192.168.12.0/24
+franchise_13,Tampa Bay Buccaneers,192.168.13.100,192.168.13.0/24
+franchise_14,New Orleans Saints,192.168.14.100,192.168.14.0/24
+franchise_15,Atlanta Falcons,192.168.15.100,192.168.15.0/24
+franchise_16,Carolina Panthers,192.168.16.100,192.168.16.0/24
+franchise_17,New England Patriots,192.168.17.100,192.168.17.0/24
+franchise_18,Buffalo Bills,192.168.18.100,192.168.18.0/24
+franchise_19,Miami Dolphins,192.168.19.100,192.168.19.0/24
+franchise_20,New York Jets,192.168.20.100,192.168.20.0/24
+franchise_21,Pittsburgh Steelers,192.168.21.100,192.168.21.0/24
+franchise_22,Baltimore Ravens,192.168.22.100,192.168.22.0/24
+franchise_23,Cleveland Browns,192.168.23.100,192.168.23.0/24
+franchise_24,Cincinnati Bengals,192.168.24.100,192.168.24.0/24
+franchise_25,Kansas City Chiefs,192.168.25.100,192.168.25.0/24
+franchise_26,Las Vegas Raiders,192.168.26.100,192.168.26.0/24
+franchise_27,Los Angeles Chargers,192.168.27.100,192.168.27.0/24
+franchise_28,Denver Broncos,192.168.28.100,192.168.28.0/24
+franchise_29,Indianapolis Colts,192.168.29.100,192.168.29.0/24
+franchise_30,Tennessee Titans,192.168.30.100,192.168.30.0/24
+franchise_31,Jacksonville Jaguars,192.168.31.100,192.168.31.0/24
+franchise_32,Houston Texans,192.168.32.100,192.168.32.0/24

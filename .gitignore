@@ -1,0 +1,63 @@
+# Seahawks Monitoring - Fichiers à ignorer
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environnements virtuels
+venv/
+ENV/
+env/
+.venv
+
+# Secrets et configuration sensible
+.secrets.key
+.secrets.enc
+.env
+*.key
+*.pem
+*.p12
+
+# Logs et rapports
+logs/
+*.log
+reports/
+data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker
+docker-compose.override.yml
+
+# Backups
+*.bak
+*.backup
+backup_*/

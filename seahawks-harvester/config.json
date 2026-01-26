@@ -1,0 +1,10 @@
+{
+  "franchise_id": "franchise_01",
+  "franchise_name": "Seattle Seahawks",
+  "scan_network": "192.168.1.0/24",
+  "scan_ports": "22,80,443,3389,8080",
+  "wan_test_host": "8.8.8.8",
+  "report_dir": "reports",
+  "log_dir": "logs",
+  "scan_interval": 3600
+}

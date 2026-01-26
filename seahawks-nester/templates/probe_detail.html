@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail Sonde - Seahawks Nester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #002244 0%, #69be28 100%);
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left h1 {
+            color: #002244;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .header-left .subtitle {
+            color: #666;
+            font-size: 1em;
+        }
+        
+        .back-btn {
+            padding: 10px 20px;
+            background: #002244;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background: #69be28;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .info-card h3 {
+            color: #002244;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .info-card .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #69be28;
+        }
+        
+        .report-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .report-section h2 {
+            color: #002244;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #002244;
+            color: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tbody tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .badge-up {
+            background: #69be28;
+            color: white;
+        }
+        
+        .badge-down {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1 id="franchiseName">Chargement...</h1>
+                <p class="subtitle">ID: <span id="franchiseId">{{ franchise_id }}</span></p>
+            </div>
+            <a href="/" class="back-btn">← Retour au tableau de bord</a>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>📊 État</h3>
+                <div class="value" id="status">--</div>
+            </div>
+            
+            <div class="info-card">
+                <h3>🖥️ Équipements</h3>
+                <div class="value" id="hostsUp">0</div>
+            </div>
+            
+            <div class="info-card">
+                <h3>🌐 Latence WAN</h3>
+                <div class="value" id="wanLatency">-- ms</div>
+            </div>
+            
+            <div class="info-card">
+                <h3>🕐 Dernier scan</h3>
+                <div class="value" id="lastScan" style="font-size: 1.2em;">--</div>
+            </div>
+        </div>
+        
+        <div class="report-section">
+            <h2>📋 Équipements détectés lors du dernier scan</h2>
+            
+            <table id="hostsTable">
+                <thead>
+                    <tr>
+                        <th>IP</th>
+                        <th>Hostname</th>
+                        <th>État</th>
+                        <th>MAC</th>
+                        <th>Fournisseur</th>
+                        <th>OS</th>
+                        <th>Ports ouverts</th>
+                    </tr>
+                </thead>
+                <tbody id="hostsBody">
+                    <tr>
+                        <td colspan="7" class="no-data">Chargement des données...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        const franchiseId = "{{ franchise_id }}";
+        
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('fr-FR');
+        }
+        
+        async function loadProbeDetail() {
+            try {
+                const response = await fetch(`/api/probe/${franchiseId}`);
+                const probe = await response.json();
+                
+                document.getElementById('franchiseName').textContent = probe.franchise_name;
+                document.getElementById('status').textContent = probe.status === 'connected' ? '✅ Connecté' : '❌ Déconnecté';
+                
+            } catch (error) {
+                console.error('Erreur chargement détail sonde:', error);
+            }
+        }
+        
+        async function loadReport() {
+            try {
+                const response = await fetch(`/api/probe/${franchiseId}/report`);
+                const report = await response.json();
+                
+                document.getElementById('hostsUp').textContent = report.summary.hosts_up;
+                document.getElementById('wanLatency').textContent = report.wan_latency_ms ? `${report.wan_latency_ms} ms` : '-- ms';
+                document.getElementById('lastScan').textContent = formatDateTime(report.timestamp);
+                
+                const tbody = document.getElementById('hostsBody');
+                
+                if (report.hosts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="no-data">Aucun équipement détecté</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = report.hosts.map(host => `
+                    <tr>
+                        <td><strong>${host.ip}</strong></td>
+                        <td>${host.hostname}</td>
+                        <td><span class="status-badge badge-${host.state}">${host.state.toUpperCase()}</span></td>
+                        <td>${host.mac_address}</td>
+                        <td>${host.vendor}</td>
+                        <td>${host.os.name} ${host.os.accuracy > 0 ? '(' + host.os.accuracy + '%)' : ''}</td>
+                        <td>${host.ports.map(p => p.port).join(', ')}</td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Erreur chargement rapport:', error);
+                document.getElementById('hostsBody').innerHTML = '<tr><td colspan="7" class="no-data">Aucun rapport disponible</td></tr>';
+            }
+        }
+        
+        // Chargement initial
+        loadProbeDetail();
+        loadReport();
+        
+        // Actualisation automatique
+        setInterval(() => {
+            loadProbeDetail();
+            loadReport();
+        }, 30000);
+    </script>
+</body>
+</html>

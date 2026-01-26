@@ -1,0 +1,361 @@
+{
+  "scan_id": "scan_20260126_103000",
+  "franchise_id": "franchise_01",
+  "franchise_name": "Seattle Seahawks",
+  "timestamp": "2026-01-26T10:30:00.123456",
+  "harvester_version": "1.0.0",
+  "network": "192.168.1.0/24",
+  "hosts": [
+    {
+      "ip": "192.168.1.1",
+      "hostname": "gateway.local",
+      "state": "up",
+      "mac_address": "00:11:22:33:44:55",
+      "vendor": "Cisco Systems",
+      "os": {
+        "name": "Cisco IOS",
+        "accuracy": 98
+      },
+      "ports": [
+        {
+          "port": 22,
+          "state": "open",
+          "service": "ssh",
+          "version": "2.0",
+          "product": "Cisco SSH"
+        },
+        {
+          "port": 80,
+          "state": "open",
+          "service": "http",
+          "version": "",
+          "product": "Cisco HTTP"
+        },
+        {
+          "port": 443,
+          "state": "open",
+          "service": "https",
+          "version": "",
+          "product": "Cisco HTTPS"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.10",
+      "hostname": "server-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:01",
+      "vendor": "Dell Inc.",
+      "os": {
+        "name": "Linux 5.15",
+        "accuracy": 95
+      },
+      "ports": [
+        {
+          "port": 22,
+          "state": "open",
+          "service": "ssh",
+          "version": "8.2p1 Ubuntu",
+          "product": "OpenSSH"
+        },
+        {
+          "port": 80,
+          "state": "open",
+          "service": "http",
+          "version": "2.4.41",
+          "product": "Apache httpd"
+        },
+        {
+          "port": 443,
+          "state": "open",
+          "service": "https",
+          "version": "2.4.41",
+          "product": "Apache httpd"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.20",
+      "hostname": "workstation-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:02",
+      "vendor": "HP Inc.",
+      "os": {
+        "name": "Windows 10",
+        "accuracy": 92
+      },
+      "ports": [
+        {
+          "port": 135,
+          "state": "open",
+          "service": "msrpc",
+          "version": "",
+          "product": "Microsoft Windows RPC"
+        },
+        {
+          "port": 445,
+          "state": "open",
+          "service": "microsoft-ds",
+          "version": "",
+          "product": "Windows SMB"
+        },
+        {
+          "port": 3389,
+          "state": "open",
+          "service": "ms-wbt-server",
+          "version": "",
+          "product": "Microsoft Terminal Services"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.30",
+      "hostname": "nas-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:03",
+      "vendor": "Synology",
+      "os": {
+        "name": "Linux 4.4",
+        "accuracy": 89
+      },
+      "ports": [
+        {
+          "port": 22,
+          "state": "open",
+          "service": "ssh",
+          "version": "7.4",
+          "product": "OpenSSH"
+        },
+        {
+          "port": 80,
+          "state": "open",
+          "service": "http",
+          "version": "",
+          "product": "Synology DiskStation"
+        },
+        {
+          "port": 443,
+          "state": "open",
+          "service": "https",
+          "version": "",
+          "product": "Synology DiskStation"
+        },
+        {
+          "port": 445,
+          "state": "open",
+          "service": "microsoft-ds",
+          "version": "",
+          "product": "Samba smbd"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.40",
+      "hostname": "printer-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:04",
+      "vendor": "Hewlett Packard",
+      "os": {
+        "name": "Unknown",
+        "accuracy": 0
+      },
+      "ports": [
+        {
+          "port": 80,
+          "state": "open",
+          "service": "http",
+          "version": "",
+          "product": "HP Printer"
+        },
+        {
+          "port": 443,
+          "state": "open",
+          "service": "https",
+          "version": "",
+          "product": "HP Printer"
+        },
+        {
+          "port": 9100,
+          "state": "open",
+          "service": "jetdirect",
+          "version": "",
+          "product": ""
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.50",
+      "hostname": "camera-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:05",
+      "vendor": "Hikvision",
+      "os": {
+        "name": "Linux 3.0",
+        "accuracy": 85
+      },
+      "ports": [
+        {
+          "port": 80,
+          "state": "open",
+          "service": "http",
+          "version": "",
+          "product": "Hikvision IP Camera"
+        },
+        {
+          "port": 554,
+          "state": "open",
+          "service": "rtsp",
+          "version": "",
+          "product": ""
+        },
+        {
+          "port": 8000,
+          "state": "open",
+          "service": "http-alt",
+          "version": "",
+          "product": ""
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.100",
+      "hostname": "wifi-ap-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:06",
+      "vendor": "Ubiquiti Networks",
+      "os": {
+        "name": "Linux 3.10",
+        "accuracy": 90
+      },
+      "ports": [
+        {
+          "port": 22,
+          "state": "open",
+          "service": "ssh",
+          "version": "7.5p1",
+          "product": "OpenSSH"
+        },
+        {
+          "port": 80,
+          "state": "open",
+          "service": "http",
+          "version": "",
+          "product": "lighttpd"
+        },
+        {
+          "port": 443,
+          "state": "open",
+          "service": "https",
+          "version": "",
+          "product": "lighttpd"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.101",
+      "hostname": "switch-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:07",
+      "vendor": "Netgear",
+      "os": {
+        "name": "Unknown",
+        "accuracy": 0
+      },
+      "ports": [
+        {
+          "port": 80,
+          "state": "open",
+          "service": "http",
+          "version": "",
+          "product": "Netgear Switch"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.200",
+      "hostname": "Unknown",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:08",
+      "vendor": "Apple Inc.",
+      "os": {
+        "name": "iOS 15.x",
+        "accuracy": 87
+      },
+      "ports": []
+    },
+    {
+      "ip": "192.168.1.201",
+      "hostname": "Unknown",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:09",
+      "vendor": "Samsung Electronics",
+      "os": {
+        "name": "Android 12",
+        "accuracy": 88
+      },
+      "ports": []
+    },
+    {
+      "ip": "192.168.1.202",
+      "hostname": "laptop-01.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:0A",
+      "vendor": "Dell Inc.",
+      "os": {
+        "name": "Windows 11",
+        "accuracy": 94
+      },
+      "ports": [
+        {
+          "port": 135,
+          "state": "open",
+          "service": "msrpc",
+          "version": "",
+          "product": "Microsoft Windows RPC"
+        },
+        {
+          "port": 445,
+          "state": "open",
+          "service": "microsoft-ds",
+          "version": "",
+          "product": "Windows SMB"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.1.203",
+      "hostname": "laptop-02.seahawks.local",
+      "state": "up",
+      "mac_address": "AA:BB:CC:DD:EE:0B",
+      "vendor": "Lenovo",
+      "os": {
+        "name": "Windows 11",
+        "accuracy": 93
+      },
+      "ports": [
+        {
+          "port": 135,
+          "state": "open",
+          "service": "msrpc",
+          "version": "",
+          "product": "Microsoft Windows RPC"
+        },
+        {
+          "port": 445,
+          "state": "open",
+          "service": "microsoft-ds",
+          "version": "",
+          "product": "Windows SMB"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_hosts": 12,
+    "hosts_up": 12,
+    "hosts_down": 0,
+    "total_ports_open": 34
+  },
+  "wan_latency_ms": 15.23,
+  "scan_duration_seconds": 67.45
+}
