@@ -201,19 +201,22 @@ class NesterManager:
             "total_probes": len(probes),
             "connected_probes": sum(1 for p in probes if p['status'] == 'connected'),
             "disconnected_probes": sum(1 for p in probes if p['status'] == 'disconnected'),
-            "total_equipment": 0,
-            "average_wan_latency": 0
+            "total_hosts": 0,
+            "total_ports_open": 0,
+            "average_latency_ms": 0
         }
         
         latencies = []
         for probe in probes:
-            if 'last_report' in probe:
-                stats['total_equipment'] += probe['last_report'].get('hosts_up', 0)
-                if probe['last_report'].get('wan_latency_ms'):
-                    latencies.append(probe['last_report']['wan_latency_ms'])
+            if 'last_report' in probe and 'summary' in probe['last_report']:
+                stats['total_hosts'] += probe['last_report']['summary'].get('hosts_up', 0)
+                stats['total_ports_open'] += probe['last_report']['summary'].get('total_ports_open', 0)
+                
+            if 'last_report' in probe and probe['last_report'].get('wan_latency_ms'):
+                latencies.append(probe['last_report']['wan_latency_ms'])
         
         if latencies:
-            stats['average_wan_latency'] = round(sum(latencies) / len(latencies), 2)
+            stats['average_latency_ms'] = round(sum(latencies) / len(latencies), 2)
         
         return stats
     
@@ -381,11 +384,11 @@ def api_get_logs(franchise_id):
 
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("  🏈 Seahawks Nester - Supervision Centralisée")
+    print("  Seahawks Nester - Supervision Centralisee")
     print("  Version:", NesterManager.VERSION)
     print("="*60)
-    print("\n📊 Dashboard accessible sur: http://0.0.0.0:8080")
-    print("📡 API REST disponible sur: http://0.0.0.0:8080/api")
-    print("\n🔒 Mode production: Définir SECRET_KEY dans l'environnement\n")
+    print("\nDashboard accessible sur: http://0.0.0.0:8080")
+    print("API REST disponible sur: http://0.0.0.0:8080/api")
+    print("\nMode production: Definir SECRET_KEY dans l'environnement\n")
     
     app.run(host='0.0.0.0', port=8080, debug=True)

@@ -37,7 +37,7 @@ def get_system_metrics():
 
 def main():
     logger.info("=" * 60)
-    logger.info("Démarrage du service Seahawks Harvester")
+    logger.info("Demarrage du service Seahawks Harvester")
     logger.info("=" * 60)
     
     # Créer dossier logs
@@ -76,44 +76,44 @@ def main():
             # Collecter métriques système
             metrics = get_system_metrics()
             if metrics:
-                logger.info(f"💻 Métriques système: CPU {metrics['cpu_percent']}% | RAM {metrics['memory_percent']}% | Disque {metrics['disk_percent']}%")
+                logger.info(f"Metriques systeme: CPU {metrics['cpu_percent']}% | RAM {metrics['memory_percent']}% | Disque {metrics['disk_percent']}%")
             
             # Lancer un scan
-            logger.info("🔍 Lancement du scan réseau...")
+            logger.info("Lancement du scan reseau...")
             scan_result = subprocess.run(['python', 'harvester.py'], capture_output=True)
             if scan_result.returncode == 0:
-                logger.info("✅ Scan terminé avec succès")
+                logger.info("Scan termine avec succes")
             else:
-                logger.error(f"❌ Erreur scan: {scan_result.stderr.decode()}")
+                logger.error(f"Erreur scan: {scan_result.stderr.decode()}")
             
             # Envoyer heartbeat
-            logger.info("💓 Envoi heartbeat...")
+            logger.info("Envoi heartbeat...")
             uploader.send_heartbeat()
             
             # Uploader le dernier rapport
-            logger.info("📤 Upload du rapport...")
+            logger.info("Upload du rapport...")
             if uploader.sync_latest_report():
-                logger.info("✅ Rapport envoyé au Nester")
+                logger.info("Rapport envoye au Nester")
             else:
-                logger.warning("⚠️ Échec de l'upload (mode autonome)")
+                logger.warning("Echec de l'upload (mode autonome)")
             
             # Uploader les logs vers le Nester
-            logger.info("📋 Upload des logs...")
+            logger.info("Upload des logs...")
             if uploader.sync_logs():
-                logger.info("✅ Logs envoyés au Nester")
+                logger.info("Logs envoyes au Nester")
             else:
-                logger.warning("⚠️ Échec upload logs")
+                logger.warning("Echec upload logs")
             
             # Attendre avant le prochain scan
             interval = config.get('scan_interval', 3600)
-            logger.info(f"⏳ Prochain scan dans {interval}s...")
+            logger.info(f"Prochain scan dans {interval}s...")
             time.sleep(interval)
             
         except KeyboardInterrupt:
-            logger.info("\n👋 Arrêt du Harvester demandé")
+            logger.info("\nArret du Harvester demande")
             break
         except Exception as e:
-            logger.error(f"❌ Erreur: {e}", exc_info=True)
+            logger.error(f"Erreur: {e}", exc_info=True)
             time.sleep(60)
 
 if __name__ == '__main__':

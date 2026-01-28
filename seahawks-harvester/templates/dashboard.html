@@ -166,12 +166,12 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏈 Seahawks Harvester</h1>
+            <h1>Seahawks Harvester</h1>
             <p class="subtitle">Dashboard de Supervision Locale</p>
         </div>
         
         <div class="refresh-info">
-            🔄 Actualisation automatique toutes les 30 secondes | Dernière mise à jour: <span id="lastUpdate">--:--:--</span>
+            Actualisation automatique toutes les 30 secondes | Dernière mise à jour: <span id="lastUpdate">--:--:--</span>
         </div>
         
         <div class="status-grid">
@@ -187,12 +187,7 @@
                 <div class="status-label" style="margin-top: 10px;">Version: <span id="version">--</span></div>
             </div>
             
-            <div class="status-card">
-                <h3>🖥️ Équipements Détectés</h3>
-                <div class="status-value" id="equipmentCount">0</div>
-                <div class="status-label">Hôtes actifs</div>
-            </div>
-            
+
             <div class="status-card">
                 <h3>🌐 Latence WAN</h3>
                 <div class="status-value" id="wanLatency" style="font-size: 2em;">-- ms</div>
@@ -200,7 +195,7 @@
             </div>
             
             <div class="status-card">
-                <h3>🕐 Dernier Scan</h3>
+                <h3>🕐 Dernier Scan</h3>c'
                 <div class="status-value" id="lastScan" style="font-size: 1.2em;">Jamais</div>
                 <div class="status-label" id="lastScanAgo">--</div>
             </div>
@@ -231,7 +226,7 @@
         <div class="footer">
             <p>© 2026 Seahawks Monitoring System | Développé pour 32 franchises NFL</p>
             <p style="margin-top: 10px; font-size: 0.9em;">
-                🔒 Mode autonome activé | Logs en JSON structuré | Principe du moindre privilège appliqué
+                Mode autonome activé | Logs en JSON structuré | Principe du moindre privilège appliqué
             </p>
         </div>
     </div>
@@ -265,10 +260,10 @@
                 
                 const statusBadge = document.getElementById('statusBadge');
                 if (data.status === 'online') {
-                    statusBadge.textContent = '✅ ONLINE';
+                    statusBadge.textContent = 'ONLINE';
                     statusBadge.className = 'status-badge status-online';
                 } else {
-                    statusBadge.textContent = '❌ OFFLINE';
+                    statusBadge.textContent = 'OFFLINE';
                     statusBadge.className = 'status-badge status-offline';
                 }
                 

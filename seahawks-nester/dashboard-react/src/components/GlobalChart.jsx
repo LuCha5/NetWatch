@@ -53,7 +53,7 @@ function GlobalChart({ probes, stats }) {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8">
         {/* État des sondes */}
         <div>
           <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
@@ -78,29 +78,6 @@ function GlobalChart({ probes, stats }) {
               <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
-        </div>
-
-        {/* Top franchises */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
-            Top 10 - Équipements détectés
-          </h3>
-          {topFranchises.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={topFranchises}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="hosts" fill="#002244" name="Hôtes actifs" />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-[250px] flex items-center justify-center text-gray-500">
-              <Activity className="w-12 h-12 mb-2" />
-              <p>Aucune donnée disponible</p>
-            </div>
-          )}
         </div>
       </div>
 

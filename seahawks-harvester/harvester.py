@@ -311,19 +311,19 @@ def main():
     print(f"{'='*60}\n")
     
     # Démarrage du scan
-    print("🔍 Démarrage du scan réseau...")
+    print("Demarrage du scan reseau...")
     results = harvester.scan_network()
     
     # Affichage des résultats
-    print(f"\n✅ Scan terminé en {results.get('scan_duration_seconds', 0)}s")
-    print(f"\n📊 Résumé:")
-    print(f"  - Hôtes actifs: {results['summary']['hosts_up']}")
-    print(f"  - Hôtes inactifs: {results['summary']['hosts_down']}")
+    print(f"\nScan termine en {results.get('scan_duration_seconds', 0)}s")
+    print(f"\nResume:")
+    print(f"  - Hotes actifs: {results['summary']['hosts_up']}")
+    print(f"  - Hotes inactifs: {results['summary']['hosts_down']}")
     print(f"  - Ports ouverts: {results['summary']['total_ports_open']}")
     print(f"  - Latence WAN: {results.get('wan_latency_ms', 'N/A')}ms")
     
-    print(f"\n📁 Rapport sauvegardé dans: {harvester.report_dir}")
-    print("\n💡 Utilisez dashboard.py pour voir l'interface web\n")
+    print(f"\nRapport sauvegarde dans: {harvester.report_dir}")
+    print("\nUtilisez dashboard.py pour voir l'interface web\n")
 
 
 if __name__ == "__main__":
