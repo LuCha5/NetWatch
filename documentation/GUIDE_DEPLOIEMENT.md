@@ -4,6 +4,8 @@
 **Date:** 26 janvier 2026  
 **Classification:** Interne
 
+Bienvenue dans le guide qui va transformer votre infrastructure en machine bien huilée ! On va déployer le système de monitoring sur 32 franchises. Ça paraît beaucoup, mais avec ce guide, ça va rouler ! 🚀
+
 ---
 
 ## Table des matières
@@ -20,182 +22,217 @@
 
 ## 1. Introduction
 
-### 1.1 Objectif
+### 1.1 L'objectif du jour
 
-Ce guide décrit le déploiement complet du Seahawks Monitoring System pour superviser 32 franchises NFL.
+Aujourd'hui, on va installer le Seahawks Monitoring System qui va superviser les 32 franchises NFL. Imaginez : plus besoin de courir d'un site à l'autre pour diagnostiquer un problème réseau ! 🎯
 
-### 1.2 Architecture
+### 1.2 Architecture (vue d'ensemble)
 
-- **Seahawks Nester** : Application centralisée (Datacenter Roubaix)
-- **Seahawks Harvester** : 32 agents déployés sur les franchises
+Pensez à notre système comme une équipe de football :
 
-### 1.3 Timeline de déploiement
+- **Le Nester** — C'est l'entraîneur au datacenter de Roubaix qui voit tout
+- **Les Harvesters** — Ce sont les 32 joueurs sur le terrain, un par franchise
 
-| Phase | Durée | Description |
-|-------|-------|-------------|
-| Préparation | 1 jour | Installation infrastructure |
-| Déploiement Nester | 2 heures | Datacenter central |
-| Déploiement Harvester | 30 min/franchise | Déploiement sur site |
-| Tests | 1 jour | Validation complète |
+### 1.3 Planning réaliste (pas de panique !)
+
+| Phase | Durée | Description | Difficulté |
+|-------|-------|-------------|------------|
+| Préparation | 1 jour | Installation infrastructure | ⭐⭐ |
+| Déploiement Nester | 2 heures | Datacenter central | ⭐⭐⭐ |
+| Déploiement Harvester | 30 min/franchise | Déploiement sur site | ⭐⭐ |
+| Tests | 1 jour | Validation complète | ⭐⭐ |
+
+💡 **Conseil** : Commencez par une seule franchise en test avant de tout déployer. Rome ne s'est pas faite en un jour !
 
 ---
 
 ## 2. Prérequis
 
-### 2.1 Infrastructure datacenter (Nester)
+### 2.1 Ce qu'il vous faut au datacenter (pour le Nester)
 
-**Serveur physique ou VM:**
-- CPU : 4 cores minimum
-- RAM : 8 GB minimum
-- Disque : 100 GB SSD
-- OS : Ubuntu Server 22.04 LTS ou Debian 11
-- Réseau : 1 Gbps
-- IP publique fixe
+**La machine (serveur ou VM) :**
 
-**Logiciels:**
+- **CPU** : 4 cores minimum (plus c'est mieux !)
+- **RAM** : 8 GB minimum (16 GB si vous êtes prévoyant)
+- **Disque** : 100 GB SSD (parce que la vitesse, ça compte)
+- **OS** : Ubuntu Server 22.04 LTS ou Debian 11
+- **Réseau** : 1 Gbps (on n'est pas là pour attendre)
+- **IP publique fixe** : Pour que les franchises puissent vous trouver
+
+**Les logiciels à installer :** (suivez les commandes, c'est facile)
+
 ```bash
-# Mise à jour système
+# D'abord, on met tout à jour (toujours une bonne idée)
 sudo apt-get update && sudo apt-get upgrade -y
 
-# Docker
+# Docker - Notre meilleur ami pour les conteneurs
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# Docker Compose
+# Docker Compose - Pour orchestrer tout ça
 sudo apt-get install docker-compose-plugin
 
-# Nginx
+# Nginx - Le gardien de la porte (reverse proxy)
 sudo apt-get install nginx
 
-# Utilitaires
+# Quelques utilitaires qui sauveront votre vie
 sudo apt-get install git curl wget jq
 ```
 
-### 2.2 Infrastructure franchise (Harvester)
+☕ **Pause café** : Pendant que ça installe, c'est le moment parfait !
 
-**Par franchise (x32):**
-- CPU : 2 cores minimum
-- RAM : 2 GB minimum
-- Disque : 20 GB
-- OS : Ubuntu Server 22.04 LTS, Debian 11 ou CentOS 8
-- Accès réseau local + Internet
+### 2.2 Ce qu'il vous faut sur chaque franchise (pour les Harvesters)
 
-**Logiciels:**
+**Par franchise (à multiplier par 32, mais c'est scriptable !) :**
+
+- **CPU** : 2 cores minimum
+- **RAM** : 2 GB minimum (c'est léger, ça passe partout)
+- **Disque** : 20 GB (on n'est pas gourmand)
+- **OS** : Ubuntu Server 22.04 LTS, Debian 11 ou CentOS 8
+- **Accès réseau** : Local + Internet (pour parler au patron)
+
+**Installation des logiciels :**
+
 ```bash
-# Python 3.11+
+# Python 3.11+ - Le langage de nos petits Harvesters
 sudo apt-get install python3 python3-pip python3-venv
 
-# nmap
+# nmap - L'outil magique pour scanner les réseaux
 sudo apt-get install nmap
 
-# Git
+# Git - Pour récupérer notre code
 sudo apt-get install git
 ```
 
+🎯 **Astuce de pro** : Créez un script d'installation et exécutez-le sur toutes les franchises. Vous gagnerez des heures !
+
 ---
 
-## 3. Déploiement du Nester
+## 3. Déploiement du Nester (le cerveau central)
 
-### 3.1 Préparation du serveur
+### 3.1 Préparation du serveur (on fait les choses bien)
+
+On va créer un utilisateur dédié, parce que faire tourner les services en root, c'est mal !
 
 ```bash
-# Créer l'utilisateur dédié
+# Créer l'utilisateur "nester"
 sudo useradd -m -s /bin/bash nester
-sudo usermod -aG docker nester
+sudo usermod -aG docker nester  # On lui donne accès à Docker
 
-# Créer la structure
+# Créer son petit chez-soi
 sudo mkdir -p /opt/seahawks-monitoring
 sudo chown nester:nester /opt/seahawks-monitoring
 ```
 
-### 3.2 Installation du code
+✅ **Pourquoi faire ça ?** Sécurité et organisation ! Chaque service a son propre utilisateur.
+
+### 3.2 Installation du code (on récupère tout)
+
+Maintenant qu'on a préparé le terrain, récupérons le code :
 
 ```bash
-# Se connecter en tant que nester
+# On se connecte en tant que l'utilisateur nester
 sudo su - nester
 
-# Cloner le dépôt
+# Direction notre répertoire de travail
 cd /opt/seahawks-monitoring
+
+# On clone notre magnifique code
 git clone https://github.com/seahawks/monitoring.git
 cd monitoring/seahawks-nester
 ```
 
-### 3.3 Configuration
+🎉 **C'est fait !** Le code est là, prêt à être configuré.
+
+### 3.3 Configuration (la partie importante)
+
+On va créer notre fichier de configuration secret. Attention, c'est sensible !
 
 ```bash
-# Créer le fichier .env
+# Ouvrir l'éditeur (ou utilisez vim si vous êtes un guerrier)
 nano .env
 ```
 
-**Contenu du fichier .env:**
+**Copiez-collez ce contenu dans le fichier .env :**
 
 ```bash
-# Clé secrète Flask (générer une clé aléatoire)
+# Clé secrète Flask (ATTENTION : changez-la !)
 SECRET_KEY=votre-cle-tres-longue-et-aleatoire-minimum-32-caracteres
 
-# Environnement
+# Mode production (pas de blagues ici)
 FLASK_ENV=production
 
-# Base de données (optionnel pour évolution future)
+# Base de données (pour plus tard si vous évoluez)
 # DATABASE_URL=postgresql://user:password@localhost/nester
 ```
 
-**Générer une clé secrète sécurisée:**
+🔐 **IMPORTANT** : Générez une vraie clé aléatoire ! Voici comment :
 
 ```bash
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-### 3.4 Démarrage
+Copiez le résultat dans votre fichier .env à la place de "votre-cle-tres-longue...". Cette clé, c'est comme la clé de votre maison : on ne la partage pas !
+
+### 3.4 Démarrage (le moment de vérité)
+
+Allez, on lance tout ça !
 
 ```bash
-# Construire et démarrer
+# Construire et démarrer les conteneurs
 docker-compose up -d
 
-# Vérifier les logs
+# Suivre ce qui se passe en direct
 docker-compose logs -f
 
-# Vérifier le statut
+# Vérifier que tout tourne bien
 docker-compose ps
 ```
 
-### 3.5 Configuration Nginx (reverse proxy)
+✅ **Bon signe** : Vous devriez voir "Up" et "healthy" dans la colonne State. Si c'est le cas, félicitations ! 🎊
+
+❌ **Problème ?** Regardez les logs avec `docker-compose logs`. 90% du temps, la réponse est là !
+
+### 3.5 Configuration Nginx (la touche professionnelle)
+
+On va maintenant mettre Nginx devant pour gérer le HTTPS et la sécurité :
 
 ```bash
-# Créer la configuration
+# Créer le fichier de configuration
 sudo nano /etc/nginx/sites-available/seahawks-nester
 ```
 
-**Configuration complète:**
+**Voici la configuration complète** (copiez-collez, j'ai tout préparé) :
 
 ```nginx
-# HTTP → HTTPS redirect
+# Redirection HTTP → HTTPS (on force le chiffrement)
 server {
     listen 80;
     server_name nester.seahawks-monitoring.com;
+    # On redirige tout vers HTTPS
     return 301 https://$server_name$request_uri;
 }
 
-# HTTPS
+# Configuration HTTPS sécurisée
 server {
     listen 443 ssl http2;
     server_name nester.seahawks-monitoring.com;
 
-    # Certificats SSL (Let's Encrypt recommandé)
+    # Certificats SSL (utilisez Let's Encrypt, c'est gratuit !)
     ssl_certificate /etc/letsencrypt/live/nester.seahawks-monitoring.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/nester.seahawks-monitoring.com/privkey.pem;
     
-    # Paramètres SSL
+    # Paramètres SSL modernes (exit TLS 1.0 et 1.1)
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
     ssl_prefer_server_ciphers on;
     
-    # Sécurité
+    # En-têtes de sécurité (ça fait plaisir aux audits sécu)
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
     
-    # Logs
+    # Logs (pour suivre qui va où)
     access_log /var/log/nginx/seahawks_access.log;
     error_log /var/log/nginx/seahawks_error.log;
     

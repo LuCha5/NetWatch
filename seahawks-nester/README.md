@@ -1,102 +1,134 @@
-# Seahawks Nester 🏈
+# Seahawks Nester �
 
-Application centralisée de supervision pour les 32 franchises NFL. Hébergée à Roubaix.
+Le poste de commandement central ! C'est ici que toute la magie opère : supervision de vos 32 franchises NFL depuis un seul et même endroit. Installé confortablement à Roubaix, le Nester est votre œil sur tout le réseau. Bienvenue au centre de contrôle ! 🎯
 
-## 🎯 Objectifs
+---
 
-- Supervision centralisée des sondes Harvester
-- Vérification de l'état des connexions (connecté/déconnecté)
-- Consultation des derniers rapports de scan
-- Dashboard web temps réel
-- API REST pour intégration
+## 🎯 Ce qu'il fait pour vous
 
-## 📋 Prérequis
+Le Nester, c'est votre tableau de bord ultime pour garder un œil sur tout :
 
-- Python 3.11+
-- Docker et Docker Compose (recommandé pour production)
-- Port 8000 disponible
+- **Supervision centralisée** — Voit tout ce que vos Harvesters lui racontent
+- **Statut en temps réel** — Connecté, déconnecté ? Vous le savez immédiatement
+- **Rapports de scan** — Consultez les derniers scans de chaque franchise
+- **Dashboard sublime** — Interface web moderne qui se rafraîchit toute seule
+- **API REST complète** — Pour intégrer avec vos outils existants
 
-## 🚀 Installation
+💡 **En bref** : C'est le cerveau de votre infrastructure de monitoring !
 
-### Installation via Docker (Recommandé)
+---
+
+## 📋 Ce qu'il vous faut
+
+Pas grand-chose en fait :
+
+- **Python 3.11+** — Le langage qu'on adore
+- **Docker et Docker Compose** — Pour une installation propre en 2 minutes
+- **Port 8000 libre** — Pour que les Harvesters puissent parler
+- **Un bon café** ☕ — Parce qu'on est pas des machines
+
+🖥️ **Machine recommandée** : 4 cores, 8 GB RAM, 100 GB disque (pour tenir longtemps)
+
+---
+
+## 🚀 Installation (3 façons de faire)
+
+### Option 1 : Docker (le plus simple, recommandé)
 
 ```bash
-# Démarrer le Nester
+# Lancer tout avec Docker Compose (c'est magique)
 docker-compose up -d
 
-# Vérifier les logs
+# Suivre ce qui se passe
 docker-compose logs -f
 
-# Arrêter le Nester
+# Tout arrêter proprement
 docker-compose down
 ```
 
-### Installation locale
+🐳 **Temps d'installation** : Environ 2 minutes. De quoi finir votre café !
+
+### Option 2 : Installation locale (pour le développement)
 
 ```bash
-# Installer les dépendances
+# Installer les bibliothèques Python
 pip install -r requirements.txt
 
-# Démarrer le serveur
+# Démarrer le serveur en mode dev
 python nester.py
 ```
 
-### Installation avec Gunicorn (Production)
+🔧 **Idéal pour** : Tester des modifications, développer de nouvelles features
+
+### Option 3 : Avec Gunicorn (pour la production)
 
 ```bash
-# Installer Gunicorn
+# Installer Gunicorn (serveur WSGI robuste)
 pip install gunicorn
 
-# Démarrer avec Gunicorn
+# Lancer avec 4 workers (ajustez selon vos cores)
 gunicorn --bind 0.0.0.0:8000 --workers 4 nester:app
 ```
 
-## 🌐 Accès
+⚡ **Plus performant** : Gunicorn gère mieux la charge en production
 
-- **Dashboard**: http://localhost:8000
-- **API REST**: http://localhost:8000/api
+---
 
-## 📡 API REST
+## 🌐 Accéder à votre Nester
 
-### Endpoints principaux
+Une fois lancé, ouvrez votre navigateur :
 
-#### 1. Statut général
+- **Dashboard principal** : http://localhost:8000
+- **API REST** : http://localhost:8000/api
+- **Statut système** : http://localhost:8000/api/status
+
+🎨 Le dashboard se rafraîchit automatiquement toutes les 30 secondes !
+
+---
+
+## 📡 API REST (pour les développeurs)
+
+### Les endpoints que vous allez adorer
+
+#### 1. Statut général ("Comment va l'empire ?")
 
 ```http
 GET /api/status
 ```
 
-**Réponse**:
+**Ce que vous recevez** :
 ```json
 {
   "version": "1.0.0",
   "status": "online",
-  "timestamp": "2026-01-26T10:30:00",
+  "timestamp": "2026-03-07T14:30:00",
   "statistics": {
     "total_probes": 32,
-    "connected_probes": 28,
-    "disconnected_probes": 4,
-    "total_equipment": 384,
-    "average_wan_latency": 12.45
+    "connected_probes": 28,          // 28 franchises en ligne
+    "disconnected_probes": 4,         // 4 qui dorment
+    "total_equipment": 384,           // Total d'équipements détectés
+    "average_wan_latency": 12.45      // Latence moyenne en ms
   }
 }
 ```
 
-#### 2. Liste des sondes
+💡 **Utilisez ça pour** : Vérifier rapidement que tout va bien
+
+#### 2. Liste complète des sondes ("Qui est là ?")
 
 ```http
 GET /api/probes
 ```
 
-**Réponse**:
+**Réponse typique** :
 ```json
 [
   {
     "franchise_id": "franchise_01",
     "franchise_name": "Seattle Seahawks",
-    "status": "connected",
-    "last_seen": "2026-01-26T10:25:00",
-    "last_seen_ago_seconds": 300,
+    "status": "connected",                  // En ligne !
+    "last_seen": "2026-03-07T14:25:00",
+    "last_seen_ago_seconds": 300,           // Vu il y a 5 minutes
     "last_report": {
       "timestamp": "2026-01-26T10:20:00",
       "hosts_up": 12,
